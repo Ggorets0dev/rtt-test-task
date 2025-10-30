@@ -15,7 +15,7 @@ typedef enum {
 /**
  * @brief Уровень лога
  */
-typedef enum {
+typedef enum log_type {
     LOG_INFO,
     LOG_ERROR
 } log_type_e;

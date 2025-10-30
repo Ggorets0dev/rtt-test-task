@@ -8,6 +8,37 @@
 
 #include "user_input.h"
 
+// ==================
+// Статические функции
+// ==================
+/**
+ * @brief Безопасное извлечение данных из stdin с учетом размера буфера и
+ * завершением чтения
+ * @param buffer     Размер ключа (в битах)
+ * @param size     Размер ключа (в битах)
+ * @return Универсальный статус возврата
+ */
+static status_e safe_fgets(char *buffer, int size);
+// ==================
+
+static status_e safe_fgets(char *buffer, const int size) {
+    if (fgets(buffer, size, stdin) == NULL) {
+        buffer[0] = '\0';
+        return STATUS_ERROR;
+    }
+
+    size_t len = strlen(buffer);
+
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        return STATUS_OK;
+    } else {
+        // Если пользователь ввёл строку длиннее буфера — очищаем stdin
+        clear_input_buffer();
+        return STATUS_ERROR;
+    }
+}
+
 void clear_input_buffer(void) {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
@@ -28,25 +59,7 @@ status_e validate_input(const char *str) {
     return STATUS_OK;
 }
 
-static int safe_fgets(char *buffer, size_t size) {
-    if (fgets(buffer, size, stdin) == NULL) {
-        buffer[0] = '\0';
-        return STATUS_ERROR;
-    }
-
-    size_t len = strlen(buffer);
-
-    if (len > 0 && buffer[len - 1] == '\n') {
-        buffer[len - 1] = '\0';
-        return STATUS_OK;
-    } else {
-        // Если пользователь ввёл строку длиннее буфера — очищаем stdin
-        clear_input_buffer();
-        return STATUS_ERROR;
-    }
-}
-
-status_e get_login(char *buffer, const size_t size) {
+status_e get_login(char *buffer, const int size) {
     int status;
 
     setlocale(LC_ALL, "");
@@ -71,7 +84,7 @@ status_e get_login(char *buffer, const size_t size) {
     return STATUS_OK;
 }
 
-status_e get_password(char *buffer, const size_t size) {
+status_e get_password(char *buffer, const int size) {
     int status;
     struct termios oldt, newt;
 

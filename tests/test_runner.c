@@ -8,24 +8,82 @@
 // ==================
 // Функции тестов (взяты из других модулей)
 // ==================
+/**
+ * @brief Тест функции AES_encrypt: переданы нулевые аргументы (NULL-указатели).
+ */
 void test_AES_encrypt_null_args(void);
+
+/**
+ * @brief Тест функции AES_encrypt: длина входных данных равна нулю.
+ */
 void test_AES_encrypt_zero_length(void);
+
+/**
+ * @brief Тест функции AES_encrypt: использован недопустимый размер ключа.
+ */
 void test_AES_encrypt_invalid_key_size(void);
 
+/**
+ * @brief Тест функции AES_decrypt: переданы нулевые аргументы (NULL-указатели).
+ */
 void test_AES_decrypt_null_args(void);
+
+/**
+ * @brief Тест функции AES_decrypt: длина входных данных равна нулю.
+ */
 void test_AES_decrypt_zero_length(void);
+
+/**
+ * @brief Тест функции AES_decrypt: использован недопустимый размер ключа.
+ */
 void test_AES_decrypt_invalid_key_size(void);
 
+/**
+ * @brief Тест корректности шифрования и расшифрования AES.
+ *
+ * Проверяет, что после шифрования и последующего расшифрования
+ * исходные данные совпадают с результатом.
+ */
 void test_AES_encrypt_decrypt_correct(void);
 
+/**
+ * @brief Тест validate_input: передан NULL-указатель.
+ */
 void test_validate_input_NULL(void);
+
+/**
+ * @brief Тест validate_input: передана пустая строка.
+ */
 void test_validate_input_empty(void);
+
+/**
+ * @brief Тест validate_input: строка содержит пробел.
+ */
 void test_validate_input_space(void);
+
+/**
+ * @brief Тест validate_input: корректная строка.
+ */
 void test_validate_input_valid(void);
 
+/**
+ * @brief Тест get_login: корректный ввод логина.
+ */
 void test_get_login_valid(void);
+
+/**
+ * @brief Тест get_password: корректный ввод пароля.
+ */
 void test_get_password_valid(void);
+
+/**
+ * @brief Тест get_crypto_key: корректное получение криптографического ключа.
+ */
 void test_get_crypto_key_valid(void);
+
+/**
+ * @brief Тест get_crypto_key: ввод недопустимого шестнадцатеричного ключа.
+ */
 void test_get_crypto_key_invalid_hex(void);
 // ==================
 
