@@ -27,11 +27,6 @@ static const EVP_CIPHER* get_AES_cipher_type(const crypto_key_size_e key_size) {
     }
 }
 
-void crypto_init() {
-    // Инициализация OpenSSL
-    OpenSSL_add_all_algorithms();
-}
-
 status_e generate_crypto_key(unsigned char *key, const crypto_key_size_e key_size) {
     const int bytes = (int)key_size / 8;
 

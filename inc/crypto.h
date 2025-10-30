@@ -26,11 +26,6 @@ typedef enum {
 #define MAX_CRYPTO_KEY_SIZE (CRYPTO_KEY_256)
 
 /**
- * @brief Инициализирует криптографический модуль
- */
-void crypto_init();
-
-/**
  * @brief Генерирует случайный ключ указанной длины
  *
  * @param key       Указатель на буфер для записи сгенерированного ключа

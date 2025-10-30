@@ -55,8 +55,6 @@ status_e handle_encrypt(const char* out_file) {
 
     status_e status;
 
-    crypto_init();
-
     // ==================
     // Читаем пользовательский ввод
     // ==================
@@ -153,7 +151,7 @@ status_e handle_encrypt(const char* out_file) {
         fwrite(cipher_password, 1, cipher_password_len, file);
 
         fclose(file);
-        printf("[!] Результат шифрования сохранён в бинарном виде: %s", out_file);
+        printf("[!] Результат шифрования сохранён в бинарном виде: %s\n", out_file);
     }
     // ==================
 
@@ -246,14 +244,8 @@ status_e handle_decrypt(const char* in_file) {
 
     fclose(file);
 
-    printf("[!] IV логина: ");
-    print_hex_bytes(iv_login, AES_CBC_BLOCK_SIZE);
-
     printf("[!] Зашифрованный логин (%d байт): ", cipher_login_len);
     print_hex_bytes(cipher_login, cipher_login_len);
-
-    printf("[!] IV пароля: ");
-    print_hex_bytes(iv_password, AES_CBC_BLOCK_SIZE);
 
     printf("[!] Зашифрованный пароль (%d байт): ", cipher_password_len);
     print_hex_bytes(cipher_password, cipher_password_len);
