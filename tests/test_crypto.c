@@ -1,17 +1,7 @@
 #include  <string.h>
 
 #include "unity.h"
-
 #include "crypto.h" // Тестируемая библиотека
-
-// Функции для настройки и очистки
-void setUp(void) {
-    // вызывается перед каждым тестом
-}
-
-void tearDown(void) {
-    // вызывается после каждого теста
-}
 
 void test_AES_encrypt_decrypt_correct(void) {
     // === Arrange ===
@@ -139,4 +129,3 @@ void test_AES_decrypt_invalid_key_size(void) {
     int result = AES_decrypt(ciphertext, sizeof(ciphertext), key, (crypto_key_size_e)999, iv, plaintext);
     TEST_ASSERT_EQUAL_MESSAGE(-1, result, "Expected -1 when key_size is invalid");
 }
-

@@ -226,7 +226,7 @@ status_e handle_decrypt(const char* in_file) {
         return STATUS_ERROR;
     }
 
-    unsigned char *cipher_password = malloc(cipher_password_len);
+    unsigned char* cipher_password = malloc(cipher_password_len);
 
     if (!cipher_password) {
         log_message(LOG_ERROR, "Ошибка выделения памяти для пароля");
@@ -271,6 +271,9 @@ status_e handle_decrypt(const char* in_file) {
         free(cipher_login);
         free(cipher_password);
 
+        if (login)      free(login);
+        if (password)   free(password);
+
         log_message(LOG_ERROR, "Ошибка чтения зашифрованного пароля");
         return STATUS_ERROR;
     }
@@ -280,8 +283,8 @@ status_e handle_decrypt(const char* in_file) {
     // ==================
 
     if (login_len > 0 && password_len > 0) {
-        printf("[!] Расшифрованный логин: %s\n", login);
-        printf("[!] Расшифрованный пароль: %s\n", password);
+        printf("[!] Расшифрованный логин: %s\n", (char*)login);
+        printf("[!] Расшифрованный пароль: %s\n", (char*)password);
     } else {
         log_message(LOG_ERROR, "Ошибка расшифровки логина или пароля");
     }

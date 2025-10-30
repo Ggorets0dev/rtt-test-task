@@ -103,7 +103,7 @@ status_e get_password(char *buffer, size_t size) {
     status = validate_input(buffer);
 
     if (status != STATUS_OK) {
-        log_message(LOG_ERROR, "Ошибка: логин не прошел валидацию");
+        log_message(LOG_ERROR, "Ошибка: пароль не прошел валидацию");
         return STATUS_ERROR;
     }
 

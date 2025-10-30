@@ -21,14 +21,14 @@ SRCS_TP = $(wildcard $(TP_UNITY_DIR)/*.c)
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 # === Режимы сборки ===
-debug: CFLAGS = $(CFLAGS_BASE) -g -O0 -fno-omit-frame-pointer
-debug:
-	@echo "=== Сборка в ОТЛАДОЧНОМ режиме ==="
-	$(MAKE) $(TARGET) CFLAGS="$(CFLAGS)"
-
 release: CFLAGS = $(CFLAGS_BASE) -O2 -DNDEBUG
 release:
 	@echo "=== Сборка в РЕЛИЗНОМ режиме ==="
+	$(MAKE) $(TARGET) CFLAGS="$(CFLAGS)"
+
+debug: CFLAGS = $(CFLAGS_BASE) -g -O0 -fno-omit-frame-pointer
+debug:
+	@echo "=== Сборка в ОТЛАДОЧНОМ режиме ==="
 	$(MAKE) $(TARGET) CFLAGS="$(CFLAGS)"
 
 # === Цель по умолчанию ===
@@ -82,4 +82,4 @@ check: debug
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose \
 		./$(TARGET) $(ARGS)
 
-.PHONY: all debug release clean fclean re check
+.PHONY: all debug release clean fclean re check test

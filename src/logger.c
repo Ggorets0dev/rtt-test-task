@@ -1,6 +1,6 @@
 #include "logger.h"
 
-void log_message(log_type_e type, const char *fmt, ...) {
+__attribute__((weak)) void log_message(log_type_e type, const char *fmt, ...) {
     const char *type_str = (type == LOG_ERROR) ? "-" : "!";
     FILE *out = (type == LOG_ERROR) ? stderr : stdout;
 

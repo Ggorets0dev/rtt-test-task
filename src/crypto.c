@@ -115,6 +115,8 @@ int AES_encrypt(const unsigned char* plaintext, const size_t plaintext_len,
 
     EVP_CIPHER_CTX_free(ctx);
 
+    ciphertext[ciphertext_len] = '\0';
+
     return ciphertext_len;
 }
 
@@ -173,6 +175,8 @@ int AES_decrypt(const unsigned char *ciphertext, const size_t ciphertext_len,
     plaintext_len += len;
 
     EVP_CIPHER_CTX_free(ctx);
+
+    plaintext[plaintext_len] = '\0';
 
     return plaintext_len;
 }
