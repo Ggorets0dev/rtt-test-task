@@ -19,7 +19,7 @@ status_e validate_input(const char *str) {
     }
 
     for (size_t i = 0; str[i] != '\0'; ++i) {
-        unsigned char ch = (unsigned char)str[i];
+        const unsigned char ch = (unsigned char)str[i];
 
         if (isspace(ch)) {
             return STATUS_ERROR;
@@ -46,7 +46,7 @@ static int safe_fgets(char *buffer, size_t size) {
     }
 }
 
-status_e get_login(char *buffer, size_t size) {
+status_e get_login(char *buffer, const size_t size) {
     int status;
 
     setlocale(LC_ALL, "");
@@ -71,7 +71,7 @@ status_e get_login(char *buffer, size_t size) {
     return STATUS_OK;
 }
 
-status_e get_password(char *buffer, size_t size) {
+status_e get_password(char *buffer, const size_t size) {
     int status;
     struct termios oldt, newt;
 
@@ -127,7 +127,7 @@ status_e get_key_size(int* size) {
     }
 
     // Преобразуем строку в число (без проверки диапазона)
-    char *endptr = NULL;
+    char* endptr = NULL;
     *size = (int)strtol(buffer, &endptr, 10);
 
     if (buffer[0] == '\0' || endptr == buffer) {
@@ -140,7 +140,7 @@ status_e get_key_size(int* size) {
 
 int get_crypto_key(unsigned char* key) {
     char line[100];
-    char *token;
+    char* token;
     int count = 0;
 
     printf("[!] Введите ключ в hex-формате (пробелы между байтами): ");
