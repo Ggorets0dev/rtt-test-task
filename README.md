@@ -57,8 +57,8 @@ OK
 
 В ПО присутствуют следующие зависимости:
 
-* Библиотека тестирования [Unity]([GitHub - ThrowTheSwitch/Unity: Simple unit testing for C](https://github.com/ThrowTheSwitch/Unity))
+* Библиотека тестирования [Unity](https://github.com/ThrowTheSwitch/Unity)
 
-* Библиотека шифрования [OpenSSL]([GitHub - openssl/openssl: TLS/SSL and crypto library](https://github.com/openssl/openssl))
+* Библиотека шифрования [OpenSSL](https://github.com/openssl/openssl)
 
 
