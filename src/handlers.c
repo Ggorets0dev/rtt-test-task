@@ -17,7 +17,7 @@ static void print_hex_bytes(const unsigned char* data, size_t size);
 // ==================
 
 static void print_hex_bytes(const unsigned char* data, size_t size) {
-    if (!data || size == 0) {
+    if (size == 0) {
         printf("(пусто)\n");
         return;
     }

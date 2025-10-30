@@ -14,7 +14,7 @@
 static const EVP_CIPHER* get_AES_cipher_type(crypto_key_size_e key_size);
 // ==================
 
-static const EVP_CIPHER* get_AES_cipher_type(crypto_key_size_e key_size) {
+static const EVP_CIPHER* get_AES_cipher_type(const crypto_key_size_e key_size) {
     if (key_size == CRYPTO_KEY_128) {
         return EVP_aes_128_cbc();
     } else if (key_size == CRYPTO_KEY_192) {
@@ -32,8 +32,8 @@ void crypto_init() {
     OpenSSL_add_all_algorithms();
 }
 
-status_e generate_crypto_key(unsigned char *key, crypto_key_size_e key_size) {
-    const int bytes = key_size / 8;
+status_e generate_crypto_key(unsigned char *key, const crypto_key_size_e key_size) {
+    const int bytes = (int)key_size / 8;
 
     if (key_size != CRYPTO_KEY_128 && key_size != CRYPTO_KEY_192 && key_size != CRYPTO_KEY_256) {
         log_message(LOG_ERROR, "Неверная длина ключа: %d бит", key_size);
@@ -56,13 +56,22 @@ status_e generate_AES_CBC_vector(unsigned char* iv) {
     }
 }
 
-int AES_encrypt(const unsigned char* plaintext, size_t plaintext_len,
-            const unsigned char* key, crypto_key_size_e key_size, const unsigned char* iv,
+int AES_encrypt(const unsigned char* plaintext, const size_t plaintext_len,
+            const unsigned char* key, const crypto_key_size_e key_size, const unsigned char* iv,
             unsigned char* ciphertext) {
 
     EVP_CIPHER_CTX* ctx = NULL;
     int len;
     int ciphertext_len;
+
+    // ====================
+    // Валидация аргументов
+    // ====================
+    if (plaintext == NULL || key == NULL || iv == NULL || ciphertext == NULL || plaintext_len == 0) {
+        log_message(LOG_ERROR, "В качестве аргументов функции шифрования переданы некорректные значения");
+        return -1;
+    }
+    // ====================
 
     const EVP_CIPHER* cipher_type = get_AES_cipher_type(key_size);
 
@@ -87,7 +96,7 @@ int AES_encrypt(const unsigned char* plaintext, size_t plaintext_len,
     }
 
     // Основной цикл шифрования
-    if (EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len) != 1) {
+    if (EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, (int)plaintext_len) != 1) {
         EVP_CIPHER_CTX_free(ctx);
 
         log_message(LOG_ERROR, "Не удалось выполнить шифрование с помощью указанного алгоритма");
@@ -109,14 +118,22 @@ int AES_encrypt(const unsigned char* plaintext, size_t plaintext_len,
     return ciphertext_len;
 }
 
-// AES-256-CBC расшифровка
-int AES_decrypt(const unsigned char *ciphertext, size_t ciphertext_len,
-            const unsigned char *key, crypto_key_size_e key_size, const unsigned char *iv,
+int AES_decrypt(const unsigned char *ciphertext, const size_t ciphertext_len,
+            const unsigned char *key, const crypto_key_size_e key_size, const unsigned char *iv,
             unsigned char *plaintext) {
 
     EVP_CIPHER_CTX *ctx = NULL;
     int len;
     int plaintext_len;
+
+    // ====================
+    // Валидация аргументов
+    // ====================
+    if (ciphertext == NULL || key == NULL || iv == NULL || plaintext == NULL || ciphertext_len == 0) {
+        log_message(LOG_ERROR, "В качестве аргументов функции шифрованя переданы некорректные значения");
+        return -1;
+    }
+    // ====================
 
     const EVP_CIPHER* cipher_type = get_AES_cipher_type(key_size);
 
@@ -139,7 +156,7 @@ int AES_decrypt(const unsigned char *ciphertext, size_t ciphertext_len,
         return -1;
     }
 
-    if (EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len) != 1) {
+    if (EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, (int)ciphertext_len) != 1) {
         EVP_CIPHER_CTX_free(ctx);
 
         log_message(LOG_ERROR, "Не удалось выполнить расшифрование с помощью указанного алгоритма");
