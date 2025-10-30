@@ -53,6 +53,16 @@ tests/test_runner.c:132:test_get_crypto_key_invalid_hex:PASS
 OK
 ```
 
+## Справка
+
+```bash
+./build/crypt_tool --help                                                                 ✔ 
+Использование: crypt_tool [--decrypt input_file] [--encrypt output_file] [--help]
+   --d, --decrypt   Войти в режим дешифрования (указать файл для чтения)
+   --o, --encrypt   Войти в режим шифрования (опционально: указать файл для записи)
+   --h, --help      Показать справку
+```
+
 ## Пример работы
 
 Работа обработчика шифрования:
@@ -85,6 +95,6 @@ OK
 
 В ПО присутствуют следующие зависимости:
 
-* Библиотека тестирования [Unity](https://github.com/ThrowTheSwitch/Unity)
+* Библиотека **тестирования** [Unity](https://github.com/ThrowTheSwitch/Unity)
 
-* Библиотека шифрования [OpenSSL](https://github.com/openssl/openssl)
+* Библиотека **шифрования** [OpenSSL](https://github.com/openssl/openssl)
