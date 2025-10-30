@@ -1,9 +1,7 @@
 #ifndef USER_INPUT_H
 #define USER_INPUT_H
 
-#include <stddef.h>
-
-#include "logger.h"
+#include "universal_types.h"
 
 /**
  * @brief Максимальная длина буфера для логина (включая завершающий NUL).

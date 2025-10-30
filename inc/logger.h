@@ -1,17 +1,6 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <stdio.h>
-#include <stdarg.h>
-
-/**
- * @brief Универсальный код возврата
- */
-typedef enum {
-    STATUS_OK = 0,
-    STATUS_ERROR
-} status_e;
-
 /**
  * @brief Уровень лога
  */

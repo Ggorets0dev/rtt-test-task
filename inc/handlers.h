@@ -1,7 +1,7 @@
 #ifndef HANDLERS_H
 #define HANDLERS_H
 
-#include "logger.h"
+#include "universal_types.h"
 
 /**
  * @brief Выводит справку о возможностях ПО

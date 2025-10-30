@@ -1,10 +1,7 @@
 #ifndef CRYPTO_H
 #define CRYPTO_H
 
-#include <openssl/evp.h>
-#include <openssl/rand.h>
-
-#include "logger.h"
+#include "universal_types.h"
 
 /**
  * @brief Возможные размеры ключей для алгоритмов шифрования

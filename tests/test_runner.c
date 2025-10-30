@@ -1,5 +1,4 @@
 #include <unistd.h>
-#include <fcntl.h>
 #include <stdio_ext.h>
 
 #include "unity.h"

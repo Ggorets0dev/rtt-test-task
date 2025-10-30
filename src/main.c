@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale.h>
 #include <getopt.h>
 
 #include "logger.h"
 #include "handlers.h"
 
 int main(int argc, char *argv[]) {
+    setlocale(LC_ALL, "");
+
     const char* input_file = NULL;
     const char* output_file = NULL;
 

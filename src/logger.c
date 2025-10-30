@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdarg.h>
+
 #include "logger.h"
 
 __attribute__((weak)) void log_message(log_type_e type, const char *fmt, ...) {

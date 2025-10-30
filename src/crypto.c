@@ -1,6 +1,9 @@
 #include <string.h>
 #include <stdio.h>
+#include <openssl/evp.h>
+#include <openssl/rand.h>
 
+#include "logger.h"
 #include "crypto.h"
 
 // ==================

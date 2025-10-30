@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include <locale.h>
 #include <termios.h>
 #include <unistd.h>
 #include <stdlib.h>
 
+#include "logger.h"
 #include "user_input.h"
 
 // ==================
@@ -61,8 +61,6 @@ status_e validate_input(const char *str) {
 
 status_e get_login(char *buffer, const int size) {
     int status;
-
-    setlocale(LC_ALL, "");
 
     printf("[!] Введите логин: ");
     fflush(stdout);

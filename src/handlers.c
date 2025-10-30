@@ -1,6 +1,8 @@
 #include <string.h>
-#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 
+#include "logger.h"
 #include "handlers.h"
 #include "crypto.h"
 #include "user_input.h"
