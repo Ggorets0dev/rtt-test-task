@@ -253,7 +253,9 @@ status_e handle_decrypt(const char* in_file) {
     print_hex_bytes(cipher_password, cipher_password_len);
 
     // Получаем ключ шифрования от пользователя
-    key_size = get_crypto_key(key);
+    do {
+        key_size = get_crypto_key(key);
+    } while (key_size == 0);
 
     // ==================
     // Расшифровываем данные с помощью введенных параметров

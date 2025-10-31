@@ -14,8 +14,8 @@
 /**
  * @brief Безопасное извлечение данных из stdin с учетом размера буфера и
  * завершением чтения
- * @param buffer     Размер ключа (в битах)
- * @param size     Размер ключа (в битах)
+ * @param buffer	Буфер для записи данных
+ * @param size		Размер буфера
  * @return Универсальный статус возврата
  */
 static status_e safe_fgets(char *buffer, int size);
@@ -122,19 +122,23 @@ status_e get_password(char *buffer, const int size) {
 }
 
 status_e get_key_size(int* size) {
+    status_e status;
+    
     if (size == NULL) {
         log_message(LOG_ERROR, "Неверный аргумент: size = NULL");
         return STATUS_ERROR;
     }
 
-    char buffer[8];  // с запасом под "256" и '\0'
+    char buffer[8] = {0};  // с запасом под "256" и '\0'
 
     printf("[!] Введите размер ключа (128 / 192 / 256 бит): ");
     fflush(stdout);
 
-    if (safe_fgets(buffer, sizeof(buffer)) != STATUS_OK) {
+	status = safe_fgets(buffer, sizeof(buffer));
+
+    if (status != STATUS_OK) {
         log_message(LOG_ERROR, "Ошибка чтения ввода");
-        return STATUS_ERROR;
+        return status;
     }
 
     // Преобразуем строку в число (без проверки диапазона)
@@ -150,13 +154,17 @@ status_e get_key_size(int* size) {
 }
 
 int get_crypto_key(unsigned char* key) {
-    char line[100];
+    char line[100] = {0};
     char* token;
     int count = 0;
+	status_e status;
 
     printf("[!] Введите ключ в hex-формате (пробелы между байтами): ");
 
-    if (!fgets(line, sizeof(line), stdin)) {
+	status = safe_fgets(line, sizeof(line));
+
+    if (status != STATUS_OK) {
+        log_message(LOG_ERROR, "Ошибка чтения ввода");
         return 0;
     }
 

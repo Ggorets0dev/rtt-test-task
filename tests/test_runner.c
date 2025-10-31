@@ -112,11 +112,12 @@ static void disable_stdout(void) {
         return;
     }
 
-    const char *null_path = "/dev/null";
+    const char* null_path = "/dev/null";
 
     fflush(stdout);
-    saved_stdout = stdout;                     // сохраняем указатель
+    saved_stdout = stdout;
     FILE *null_out = freopen(null_path, "w", stdout);
+    
     if (null_out == NULL) {
         // если не удалось перенаправить, возвращаем всё обратно
         stdout = saved_stdout;
@@ -131,7 +132,12 @@ static void enable_stdout(void) {
         return;
     }
 
-    freopen("/dev/tty", "w", stdout);
+	const char* tty_path = "/dev/tty";
+
+	if (freopen(tty_path, "w", stdout) == NULL) {
+		// Не удалось выполнить перенаправление
+		return;
+	}
 
     saved_stdout = NULL;
 }
