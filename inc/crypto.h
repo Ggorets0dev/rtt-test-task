@@ -46,6 +46,14 @@ status_e generate_crypto_key(unsigned char *key, crypto_key_size_e key_size);
 status_e generate_AES_CBC_vector(unsigned char* iv);
 
 /**
+ * @brief Очищает память, выделенную под буферы, связанные с шифрованием
+ *
+ * @param ptr  	Указатель на буфер
+ * @param size  Размер буфера
+ */
+void clear_crypto_buffer(void* ptr, size_t size);
+
+/**
  * @brief Шифрует данные с использованием алгоритма AES
  *
  * @param plaintext      Указатель на входные данные (открытый текст)

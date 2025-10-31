@@ -54,6 +54,10 @@ status_e generate_AES_CBC_vector(unsigned char* iv) {
     }
 }
 
+void clear_crypto_buffer(void* ptr, size_t size) {
+	OPENSSL_cleanse(ptr, size);
+}
+
 int AES_encrypt(const unsigned char* plaintext, const size_t plaintext_len,
             const unsigned char* key, const crypto_key_size_e key_size, const unsigned char* iv,
             unsigned char* ciphertext) {
@@ -87,6 +91,7 @@ int AES_encrypt(const unsigned char* plaintext, const size_t plaintext_len,
 
     // Инициализация шифрования с выбранным типом AES
     if (EVP_EncryptInit_ex(ctx, cipher_type, NULL, key, iv) != 1) {
+        EVP_CIPHER_CTX_reset(ctx);
         EVP_CIPHER_CTX_free(ctx);
 
         log_message(LOG_ERROR, "Не удалось инициализировать контекст шифрования выбранными настройками");
@@ -95,6 +100,7 @@ int AES_encrypt(const unsigned char* plaintext, const size_t plaintext_len,
 
     // Основной цикл шифрования
     if (EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, (int)plaintext_len) != 1) {
+        EVP_CIPHER_CTX_reset(ctx);
         EVP_CIPHER_CTX_free(ctx);
 
         log_message(LOG_ERROR, "Не удалось выполнить шифрование с помощью указанного алгоритма");
@@ -111,6 +117,7 @@ int AES_encrypt(const unsigned char* plaintext, const size_t plaintext_len,
 
     ciphertext_len += len;
 
+    EVP_CIPHER_CTX_reset(ctx);
     EVP_CIPHER_CTX_free(ctx);
 
     ciphertext[ciphertext_len] = '\0';
@@ -150,6 +157,7 @@ int AES_decrypt(const unsigned char *ciphertext, const size_t ciphertext_len,
     }
 
     if (EVP_DecryptInit_ex(ctx, cipher_type, NULL, key, iv) != 1) {
+        EVP_CIPHER_CTX_reset(ctx);
         EVP_CIPHER_CTX_free(ctx);
 
         log_message(LOG_ERROR, "Не удалось инициализировать контекст шифрования выбранными настройками");
@@ -157,6 +165,7 @@ int AES_decrypt(const unsigned char *ciphertext, const size_t ciphertext_len,
     }
 
     if (EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, (int)ciphertext_len) != 1) {
+        EVP_CIPHER_CTX_reset(ctx);
         EVP_CIPHER_CTX_free(ctx);
 
         log_message(LOG_ERROR, "Не удалось выполнить расшифрование с помощью указанного алгоритма");
@@ -166,12 +175,14 @@ int AES_decrypt(const unsigned char *ciphertext, const size_t ciphertext_len,
     plaintext_len = len;
 
     if (EVP_DecryptFinal_ex(ctx, plaintext + len, &len) != 1) {
+        EVP_CIPHER_CTX_reset(ctx);
         EVP_CIPHER_CTX_free(ctx);
         return -1;
     }
 
     plaintext_len += len;
 
+    EVP_CIPHER_CTX_reset(ctx);
     EVP_CIPHER_CTX_free(ctx);
 
     plaintext[plaintext_len] = '\0';

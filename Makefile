@@ -1,46 +1,72 @@
 # === Директории ===
-BUILD_DIR = build
-TARGET = $(BUILD_DIR)/crypt_tool
-TARGET_TEST_RUNNER = $(BUILD_DIR)/test_runner
-SRC_DIR = src
-INC_DIR = inc
-TP_UNITY_DIR = third-party/unity
-OBJ_DIR = $(BUILD_DIR)/obj
+BUILD_DIR      := build
+OBJ_DIR        := $(BUILD_DIR)/obj
+SRC_DIR        := src
+INC_DIR        := inc
+TEST_DIR       := tests
+TP_UNITY_DIR   := third-party/unity
 
-# === Компилятор ===
-CC = gcc
-CFLAGS_BASE = -Wall -Wextra -I$(INC_DIR) -I$(TP_UNITY_DIR) -std=c17
-LDFLAGS = -lssl -lcrypto
+TARGET          := $(BUILD_DIR)/crypt_tool
+TARGET_TEST_RUNNER := $(BUILD_DIR)/test_runner
+
+# === Компилятор и флаги ===
+CC       := gcc
+CFLAGS_BASE := -Wall -Wextra -std=c17 -I$(INC_DIR) -I$(TP_UNITY_DIR) -MMD -MP
+LDFLAGS  := -lssl -lcrypto
 
 # === Режим сборки (по умолчанию release) ===
 MODE ?= release
+ifeq ($(MODE),debug)
+  CFLAGS := $(CFLAGS_BASE) -g -O0 -fno-omit-frame-pointer
+  BUILD_MSG := "=== Сборка в ОТЛАДОЧНОМ режиме ==="
+else
+  CFLAGS := $(CFLAGS_BASE) -O2 -DNDEBUG
+  BUILD_MSG := "=== Сборка в РЕЛИЗНОМ режиме ==="
+endif
 
-# === Список исходников и объектных файлов ===
-SRCS = $(wildcard $(SRC_DIR)/*.c)
-SRCS_TP = $(wildcard $(TP_UNITY_DIR)/*.c)
-OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
+# === Источники и объекты ===
+SRCS      := $(wildcard $(SRC_DIR)/*.c)
+OBJS      := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
+DEPS      := $(OBJS:.o=.d)
 
-# === Режимы сборки ===
-release: CFLAGS = $(CFLAGS_BASE) -O2 -DNDEBUG
-release:
-	@echo "=== Сборка в РЕЛИЗНОМ режиме ==="
-	$(MAKE) $(TARGET) CFLAGS="$(CFLAGS)"
-
-debug: CFLAGS = $(CFLAGS_BASE) -g -O0 -fno-omit-frame-pointer
-debug:
-	@echo "=== Сборка в ОТЛАДОЧНОМ режиме ==="
-	$(MAKE) $(TARGET) CFLAGS="$(CFLAGS)"
+# === Тестовые файлы ===
+TEST_SRCS := $(wildcard $(TEST_DIR)/*.c)
+TEST_OBJS := $(patsubst $(TEST_DIR)/%.c,$(OBJ_DIR)/%.test.o,$(TEST_SRCS))
+SRCS_TP   := $(wildcard $(TP_UNITY_DIR)/*.c)
+OBJS_NO_MAIN := $(filter-out $(OBJ_DIR)/main.o, $(OBJS))
 
 # === Цель по умолчанию ===
-all: release
+all: $(TARGET)
 
-# === Линковка ===
+# === Основная сборка ===
 $(TARGET): $(OBJS) | $(BUILD_DIR)
+	@echo $(BUILD_MSG)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	@echo "Сборка завершена: $@"
 
-# === Компиляция ===
+# === Компиляция .c → .o ===
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+# === Тестовый раннер ===
+$(TARGET_TEST_RUNNER): $(OBJS_NO_MAIN) $(SRCS_TP) $(TEST_OBJS) | $(BUILD_DIR)
+	@echo "=== Сборка тестового раннера ==="
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	@echo "Сборка завершена: $@"
+
+# Компиляция тестовых файлов
+$(OBJ_DIR)/%.test.o: $(TEST_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# === Запуск тестов ===
+test: $(TARGET_TEST_RUNNER)
+	@echo "=== Запуск тестов ==="
+	@./$(TARGET_TEST_RUNNER)
+
+# === Проверка через Valgrind ===
+check: MODE=debug
+check: $(TARGET)
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./$(TARGET) $(ARGS)
 
 # === Создание директорий ===
 $(BUILD_DIR) $(OBJ_DIR):
@@ -48,38 +74,16 @@ $(BUILD_DIR) $(OBJ_DIR):
 
 # === Очистка ===
 clean:
-	rm -rf $(OBJ_DIR) $(TARGET)
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
+	rm -rf $(BUILD_DIR)
 	@echo "Полная очистка завершена"
-
-# === Тесты ===
-TEST_DIR = tests
-TEST_SRCS = $(wildcard $(TEST_DIR)/*.c)
-TEST_OBJS = $(patsubst $(TEST_DIR)/%.c, $(OBJ_DIR)/%.test.o, $(TEST_SRCS))
-
-# Убираем src/main.c из сборки тестов
-OBJS_NO_MAIN = $(filter-out $(OBJ_DIR)/main.o, $(OBJS))
-
-test: CFLAGS = $(CFLAGS_BASE) -g -O0
-test: $(TARGET_TEST_RUNNER)
-	@echo "=== Запуск тестов ==="
-	@./$(TARGET_TEST_RUNNER)
-
-$(TARGET_TEST_RUNNER): $(OBJS_NO_MAIN) $(SRCS_TP) $(TEST_OBJS) | $(BUILD_DIR)
-	@echo "=== Сборка тестового раннера ==="
-	$(CC) $(CFLAGS) $(OBJS_NO_MAIN) $(SRCS_TP) $(TEST_OBJS) -o $@ $(LDFLAGS)
-
-# Компиляция тестовых файлов (в отдельные object-файлы)
-$(OBJ_DIR)/%.test.o: $(TEST_DIR)/%.c | $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
 
 re: fclean all
 
-# === Проверка через Valgrind ===
-check: debug
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose \
-		./$(TARGET) $(ARGS)
+# === Зависимости ===
+-include $(DEPS)
 
-.PHONY: all debug release clean fclean re check test
+.PHONY: all clean fclean re test check
+
